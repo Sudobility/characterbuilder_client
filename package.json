@@ -21,9 +21,12 @@
     "lint": "eslint src",
     "format": "prettier --write \"src/**/*.ts\""
   },
-  "files": ["dist/**/*", "CLAUDE.md"],
+  "files": [
+    "dist/**/*",
+    "CLAUDE.md"
+  ],
   "dependencies": {
-    "@sudobility/characterbuilder_types": "file:../characterbuilder_types"
+    "@sudobility/characterbuilder_types": "link:@sudobility/characterbuilder_types"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
