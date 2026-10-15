@@ -26,7 +26,7 @@
     "CLAUDE.md"
   ],
   "dependencies": {
-    "@sudobility/characterbuilder_types": "link:@sudobility/characterbuilder_types"
+    "@sudobility/characterbuilder_types": "^0.1.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
