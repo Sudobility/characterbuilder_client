@@ -6,6 +6,8 @@ import {
   type ConsumableBalanceResponse,
   type CreateCharacterRequest,
   type CreditProduct,
+  type DistributionRequest,
+  type DistributionResponse,
   type Generation,
   type GenerateRequestInput,
   type MeResponse,
@@ -162,6 +164,15 @@ export class CharacterBuilderClient {
     return this.json<ComposeResponse>(
       'POST',
       ROUTES.composePrompt,
+      undefined,
+      req
+    );
+  }
+  /** Demographics -> per-trait probability maps (the casting odds to display). */
+  getDistributions(req: DistributionRequest) {
+    return this.json<DistributionResponse>(
+      'POST',
+      ROUTES.distributions,
       undefined,
       req
     );

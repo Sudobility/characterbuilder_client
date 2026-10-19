@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   ComposeRequestInput,
+  DistributionRequest,
+  Generation,
   GenerateRequestInput,
 } from '@sudobility/characterbuilder_types';
 import { useCharacterBuilderClient } from './client-context';
@@ -14,7 +16,11 @@ export function useCompose() {
   });
 }
 
-/** Spend credits and generate images; invalidates balance + history on success. */
+/**
+ * Enqueue a generation JOB (returns immediately with status 'pending'); reserves
+ * credits. Poll the returned generation with `useGeneration(id)` until terminal.
+ * Invalidates balance/history right away (credits are reserved up front).
+ */
 export function useGenerate() {
   const client = useCharacterBuilderClient();
   const qc = useQueryClient();
@@ -28,6 +34,17 @@ export function useGenerate() {
   });
 }
 
+/** Demographics -> per-trait probability maps (casting odds for the UI). */
+export function useDistributions() {
+  const client = useCharacterBuilderClient();
+  return useMutation({
+    mutationFn: (req: DistributionRequest) => client.getDistributions(req),
+  });
+}
+
+const isTerminal = (g?: Generation) =>
+  g?.status === 'succeeded' || g?.status === 'failed';
+
 export function useGenerations(query?: { limit?: number; cursor?: string }) {
   const client = useCharacterBuilderClient();
   return useQuery({
@@ -36,11 +53,28 @@ export function useGenerations(query?: { limit?: number; cursor?: string }) {
   });
 }
 
+/**
+ * Fetch one generation and POLL while it's still pending/running (jobs are
+ * async), stopping once it succeeds or fails. On each terminal transition it
+ * refreshes the history list and the credit balance (a partial batch releases
+ * the undelivered reserve).
+ */
 export function useGeneration(id: string | undefined) {
   const client = useCharacterBuilderClient();
+  const qc = useQueryClient();
   return useQuery({
     queryKey: queryKeys.generation(id ?? ''),
-    queryFn: () => client.getGeneration(id!),
+    queryFn: async () => {
+      const gen = await client.getGeneration(id!);
+      if (isTerminal(gen)) {
+        qc.invalidateQueries({ queryKey: queryKeys.generationLists() });
+        qc.invalidateQueries({ queryKey: queryKeys.balance() });
+        qc.invalidateQueries({ queryKey: queryKeys.me() });
+      }
+      return gen;
+    },
     enabled: Boolean(id),
+    refetchInterval: (query) =>
+      isTerminal(query.state.data as Generation | undefined) ? false : 2000,
   });
 }
