@@ -12,6 +12,7 @@ import {
   type GenerateRequestInput,
   type MeResponse,
   type Paginated,
+  type SheetRequestInput,
   type UpdateCharacterRequest,
 } from '@sudobility/characterbuilder_types';
 import { ApiError, apiErrorFrom } from '../errors';
@@ -179,6 +180,10 @@ export class CharacterBuilderClient {
   }
   generate(req: GenerateRequestInput) {
     return this.json<Generation>('POST', ROUTES.generate, undefined, req);
+  }
+  /** Staged sheet generation (head / body / clothed). */
+  generateSheet(req: SheetRequestInput) {
+    return this.json<Generation>('POST', ROUTES.generateSheet, undefined, req);
   }
   listGenerations(query?: { limit?: number; cursor?: string }) {
     return this.json<Paginated<Generation>>('GET', ROUTES.generations, query);

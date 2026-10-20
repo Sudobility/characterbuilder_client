@@ -4,6 +4,7 @@ import type {
   DistributionRequest,
   Generation,
   GenerateRequestInput,
+  SheetRequestInput,
 } from '@sudobility/characterbuilder_types';
 import { useCharacterBuilderClient } from './client-context';
 import { queryKeys } from './query-keys';
@@ -26,6 +27,24 @@ export function useGenerate() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (req: GenerateRequestInput) => client.generate(req),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.generationLists() });
+      qc.invalidateQueries({ queryKey: queryKeys.balance() });
+      qc.invalidateQueries({ queryKey: queryKeys.me() });
+    },
+  });
+}
+
+/**
+ * Enqueue a staged sheet JOB (head / body / clothed); returns immediately with
+ * status 'pending' and reserves credits. Poll with `useGeneration(id)` until
+ * terminal. Same cache invalidation as `useGenerate`.
+ */
+export function useGenerateSheet() {
+  const client = useCharacterBuilderClient();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (req: SheetRequestInput) => client.generateSheet(req),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.generationLists() });
       qc.invalidateQueries({ queryKey: queryKeys.balance() });

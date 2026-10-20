@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/characterbuilder_client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Network client and react-query hooks for CharacterBuilder",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,7 +26,7 @@
     "CLAUDE.md"
   ],
   "dependencies": {
-    "@sudobility/characterbuilder_types": "^0.1.2"
+    "@sudobility/characterbuilder_types": "^0.1.3"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
