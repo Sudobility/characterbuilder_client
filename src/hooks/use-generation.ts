@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  AnalyzeRequest,
   ComposeRequestInput,
+  DescribeRequest,
   DistributionRequest,
   Generation,
   GenerateRequestInput,
+  Paginated,
   SheetRequestInput,
 } from '@sudobility/characterbuilder_types';
 import { useCharacterBuilderClient } from './client-context';
@@ -53,6 +56,30 @@ export function useGenerateSheet() {
   });
 }
 
+/**
+ * Infer a (partial) FaceSpec from a free-text description (no credits spent). The
+ * caller merges the returned spec into its draft. The description endpoint is a pure
+ * LLM call, so a failure here means the provider is unconfigured or declined.
+ */
+export function useDescribe() {
+  const client = useCharacterBuilderClient();
+  return useMutation({
+    mutationFn: (req: DescribeRequest) => client.describe(req),
+  });
+}
+
+/**
+ * Read a (partial) FaceSpec from an uploaded headshot via a vision model (no
+ * credits). The caller merges the result into its draft. A failure means the
+ * provider is unconfigured or declined the image.
+ */
+export function useAnalyze() {
+  const client = useCharacterBuilderClient();
+  return useMutation({
+    mutationFn: (req: AnalyzeRequest) => client.analyze(req),
+  });
+}
+
 /** Demographics -> per-trait probability maps (casting odds for the UI). */
 export function useDistributions() {
   const client = useCharacterBuilderClient();
@@ -64,11 +91,20 @@ export function useDistributions() {
 const isTerminal = (g?: Generation) =>
   g?.status === 'succeeded' || g?.status === 'failed';
 
+/**
+ * The generation history (job list). Polls every 3s while any job is still
+ * pending/running so the history reflects live status, and stops once all are
+ * terminal.
+ */
 export function useGenerations(query?: { limit?: number; cursor?: string }) {
   const client = useCharacterBuilderClient();
   return useQuery({
     queryKey: queryKeys.generations(query),
     queryFn: () => client.listGenerations(query),
+    refetchInterval: (q) => {
+      const data = q.state.data as Paginated<Generation> | undefined;
+      return data?.items.some((g) => !isTerminal(g)) ? 3000 : false;
+    },
   });
 }
 

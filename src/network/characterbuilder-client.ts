@@ -6,6 +6,10 @@ import {
   type ConsumableBalanceResponse,
   type CreateCharacterRequest,
   type CreditProduct,
+  type AnalyzeRequest,
+  type AnalyzeResponse,
+  type DescribeRequest,
+  type DescribeResponse,
   type DistributionRequest,
   type DistributionResponse,
   type Generation,
@@ -169,6 +173,14 @@ export class CharacterBuilderClient {
       req
     );
   }
+  /** Free-text description -> inferred (partial) FaceSpec. No credits spent. */
+  describe(req: DescribeRequest) {
+    return this.json<DescribeResponse>('POST', ROUTES.describe, undefined, req);
+  }
+  /** Uploaded headshot -> read (partial) FaceSpec via vision. No credits spent. */
+  analyze(req: AnalyzeRequest) {
+    return this.json<AnalyzeResponse>('POST', ROUTES.analyze, undefined, req);
+  }
   /** Demographics -> per-trait probability maps (the casting odds to display). */
   getDistributions(req: DistributionRequest) {
     return this.json<DistributionResponse>(
@@ -209,5 +221,14 @@ export class CharacterBuilderClient {
   }
   getProducts() {
     return this.json<CreditProduct[]>('GET', ROUTES.consumablesProducts);
+  }
+  /** Dev-only: grant credits to the signed-in user (server must allow it). */
+  devTopUp(credits?: number) {
+    return this.json<ConsumableBalanceResponse>(
+      'POST',
+      ROUTES.consumablesDevTopup,
+      undefined,
+      { credits }
+    );
   }
 }
