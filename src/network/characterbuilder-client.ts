@@ -14,6 +14,7 @@ import {
   type DistributionResponse,
   type Generation,
   type GenerateRequestInput,
+  type VisualStyleGroup,
   type MeResponse,
   type Paginated,
   type SheetRequestInput,
@@ -192,6 +193,13 @@ export class CharacterBuilderClient {
   }
   generate(req: GenerateRequestInput) {
     return this.json<Generation>('POST', ROUTES.generate, undefined, req);
+  }
+  /** The same grouped art style catalog used by the generation request. */
+  getVisualStyles() {
+    return this.json<{ groups: VisualStyleGroup[] }>(
+      'GET',
+      ROUTES.visualStyles
+    );
   }
   /** Staged sheet generation (head / body / clothed). */
   generateSheet(req: SheetRequestInput) {
