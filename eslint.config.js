@@ -51,6 +51,7 @@ export default [
     },
     rules: {
       'preserve-caught-error': 'off',
+      'no-useless-assignment': 'off',
       // TypeScript resolves identifiers itself; no-undef is redundant and flags DOM lib types.
       'no-undef': 'off',
       // Disable base rule and enable TypeScript version

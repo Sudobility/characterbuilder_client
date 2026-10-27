@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/characterbuilder_client",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Network client and react-query hooks for CharacterBuilder",
   "type": "module",
   "main": "./dist/index.js",
