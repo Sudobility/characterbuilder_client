@@ -50,6 +50,7 @@ export default [
       prettier: prettier,
     },
     rules: {
+      'preserve-caught-error': 'off',
       // TypeScript resolves identifiers itself; no-undef is redundant and flags DOM lib types.
       'no-undef': 'off',
       // Disable base rule and enable TypeScript version
