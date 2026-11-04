@@ -13,6 +13,7 @@ import {
   type DistributionRequest,
   type DistributionResponse,
   type Generation,
+  type GeneratedImage,
   type GenerateRequestInput,
   type VisualStyleGroup,
   type MeResponse,
@@ -155,6 +156,22 @@ export class CharacterBuilderClient {
   getCharacter(id: string) {
     return this.json<Character>('GET', ROUTES.character(id));
   }
+  /** Every headshot owned by a character (1:M), newest first. */
+  listCharacterImages(id: string) {
+    return this.json<GeneratedImage[]>('GET', ROUTES.characterImages(id));
+  }
+  /** Remove a headshot from a character (clears the association; keeps the image). */
+  updateCharacterImageNote(id: string, imageId: string, note: string | null) {
+    return this.json<GeneratedImage>(
+      'PATCH',
+      ROUTES.characterImage(id, imageId),
+      undefined,
+      { note }
+    );
+  }
+  removeCharacterImage(id: string, imageId: string) {
+    return this.json<Character>('DELETE', ROUTES.characterImage(id, imageId));
+  }
   createCharacter(req: CreateCharacterRequest) {
     return this.json<Character>('POST', ROUTES.characters, undefined, req);
   }
@@ -210,6 +227,10 @@ export class CharacterBuilderClient {
   }
   getGeneration(id: string) {
     return this.json<Generation>('GET', ROUTES.generation(id));
+  }
+  /** Metadata (spec, owning character, role) for one image, by id. */
+  getImage(id: string) {
+    return this.json<GeneratedImage>('GET', ROUTES.imageMeta(id));
   }
 
   /** Fetch raw image bytes (authenticated); the app wraps them in an object URL. */

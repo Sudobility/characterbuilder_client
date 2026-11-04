@@ -88,6 +88,16 @@ export function useDistributions() {
   });
 }
 
+/** Metadata (spec, owning character, role) for one image, by id. */
+export function useImage(id: string | undefined) {
+  const client = useCharacterBuilderClient();
+  return useQuery({
+    queryKey: queryKeys.image(id ?? ''),
+    queryFn: () => client.getImage(id!),
+    enabled: Boolean(id),
+  });
+}
+
 const isTerminal = (g?: Generation) =>
   g?.status === 'succeeded' || g?.status === 'failed';
 

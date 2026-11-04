@@ -23,6 +23,16 @@ export function useCharacter(id: string | undefined) {
   });
 }
 
+/** Every headshot owned by a character (1:M), newest first. */
+export function useCharacterImages(id: string | undefined) {
+  const client = useCharacterBuilderClient();
+  return useQuery({
+    queryKey: queryKeys.characterImages(id ?? ''),
+    queryFn: () => client.listCharacterImages(id!),
+    enabled: Boolean(id),
+  });
+}
+
 export function useCreateCharacter() {
   const client = useCharacterBuilderClient();
   const qc = useQueryClient();
@@ -41,6 +51,41 @@ export function useUpdateCharacter() {
       client.updateCharacter(v.id, v.req),
     onSuccess: (character) => {
       qc.invalidateQueries({ queryKey: queryKeys.characterLists() });
+      qc.setQueryData(queryKeys.character(character.id), character);
+    },
+  });
+}
+
+/** Remove a headshot from a character (clears the association; keeps the image). */
+export function useUpdateCharacterImageNote() {
+  const client = useCharacterBuilderClient();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: {
+      characterId: string;
+      imageId: string;
+      note: string | null;
+    }) => client.updateCharacterImageNote(v.characterId, v.imageId, v.note),
+    onSuccess: (image, v) => {
+      qc.setQueryData(queryKeys.image(v.imageId), image);
+      qc.invalidateQueries({
+        queryKey: queryKeys.characterImages(v.characterId),
+      });
+    },
+  });
+}
+
+export function useRemoveCharacterImage() {
+  const client = useCharacterBuilderClient();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { characterId: string; imageId: string }) =>
+      client.removeCharacterImage(v.characterId, v.imageId),
+    onSuccess: (character, v) => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.characterImages(v.characterId),
+      });
+      qc.invalidateQueries({ queryKey: queryKeys.generationLists() });
       qc.setQueryData(queryKeys.character(character.id), character);
     },
   });

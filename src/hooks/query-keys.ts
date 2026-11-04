@@ -12,9 +12,12 @@ export const queryKeys = {
     [...root(), 'character-lists', filters ?? {}] as const,
   charactersAll: () => [...root(), 'character'] as const,
   character: (id: string) => [...root(), 'character', id] as const,
+  characterImages: (id: string) =>
+    [...root(), 'character', id, 'images'] as const,
 
   generationLists: () => [...root(), 'generation-lists'] as const,
   generations: (filters?: object) =>
     [...root(), 'generation-lists', filters ?? {}] as const,
   generation: (id: string) => [...root(), 'generation', id] as const,
+  image: (id: string) => [...root(), 'image', id] as const,
 };
