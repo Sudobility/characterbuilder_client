@@ -5,7 +5,7 @@
     "": {
       "name": "@sudobility/characterbuilder_client",
       "dependencies": {
-        "@sudobility/characterbuilder_types": "^0.1.15",
+        "@sudobility/characterbuilder_types": "^0.1.16",
       },
       "devDependencies": {
         "@eslint/js": "~10.0.1",
@@ -116,9 +116,9 @@
 
     "@standard-schema/spec": ["@standard-schema/spec@1.1.0", "", {}, "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="],
 
-    "@sudobility/characterbuilder_types": ["@sudobility/characterbuilder_types@0.1.15", "https://npm.pkg.github.com/download/@sudobility/characterbuilder_types/0.1.15/d300c7a82c64457cbfe7b42ae22a17f9e1c40bb2", { "dependencies": { "@sudobility/types": "^1.10.2", "zod": "~4.6.5" } }, "sha512-RhAgyD3ulBJ8IrcFLP4P3vBYuANDeN0rupKJSMqLJPnqD63md5S0rUnzZ3Se+NDrIVAqJxWhOEu5sIYbxA/+tg=="],
+    "@sudobility/characterbuilder_types": ["@sudobility/characterbuilder_types@0.1.16", "https://npm.pkg.github.com/download/@sudobility/characterbuilder_types/0.1.16/58212b0a466aa01c6111d61f4e0ba8813948ee0e", { "dependencies": { "@sudobility/types": "^1.11.1", "zod": "~4.6.5" } }, "sha512-a161cr2RsYvZVaqtEVtUwHuwmHBkh0590aoPGwP6+g1y4J4v7cgDFBTe16Ueu6rrAsIAK62l63anpf6baxmrpQ=="],
 
-    "@sudobility/types": ["@sudobility/types@1.10.2", "https://npm.pkg.github.com/download/@sudobility/types/1.10.2/c25e0a0122786dbd23651b15aab022c02c3a5a5e", {}, "sha512-CjMjxeoWE+WMt7HWPWFwcjmjXEbwS9ZPnoa6tN8dBzQSWCaCTZBIfjDDk7xwi+9/2OOxVaorDEHNOZTqSdUxvA=="],
+    "@sudobility/types": ["@sudobility/types@1.11.1", "https://npm.pkg.github.com/download/@sudobility/types/1.11.1/dc6bf578b6f618fab74a7a60ed064d80b18782c2", {}, "sha512-NPECPlRPj1IavT7pu3KtIFB6rDfs30AgD89pw/qrNe1+Tm0FFLkIfqxE/y8+uajm85um+FcoYHn/hY70Px9uow=="],
 
     "@tanstack/query-core": ["@tanstack/query-core@5.104.5", "", {}, "sha512-Q94gI8Opd+CbdVNOdj8ZCyV8WqLYitrDq1t96Xc8WZT6lY0r5iRnJLXYDxMex7EEf2v+mXvn4FcjaBKSxXZQ9A=="],
 
