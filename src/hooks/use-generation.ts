@@ -6,9 +6,9 @@ import type {
   DistributionRequest,
   Generation,
   GenerateRequestInput,
-  Paginated,
   SheetRequestInput,
 } from '@sudobility/characterbuilder_types';
+import type { PaginatedResponse } from '@sudobility/types';
 import { useCharacterBuilderClient } from './client-context';
 import { queryKeys } from './query-keys';
 
@@ -112,8 +112,8 @@ export function useGenerations(query?: { limit?: number; cursor?: string }) {
     queryKey: queryKeys.generations(query),
     queryFn: () => client.listGenerations(query),
     refetchInterval: (q) => {
-      const data = q.state.data as Paginated<Generation> | undefined;
-      return data?.items.some((g) => !isTerminal(g)) ? 3000 : false;
+      const data = q.state.data as PaginatedResponse<Generation> | undefined;
+      return data?.data?.some((g) => !isTerminal(g)) ? 3000 : false;
     },
   });
 }

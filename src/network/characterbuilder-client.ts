@@ -17,10 +17,10 @@ import {
   type GenerateRequestInput,
   type VisualStyleGroup,
   type MeResponse,
-  type Paginated,
   type SheetRequestInput,
   type UpdateCharacterRequest,
 } from '@sudobility/characterbuilder_types';
+import { type PaginatedResponse } from '@sudobility/types';
 import { ApiError, apiErrorFrom } from '../errors';
 import {
   type HttpMethod,
@@ -107,12 +107,10 @@ export class CharacterBuilderClient {
     ) {
       const f = env as {
         error?: string;
-        code?: string;
         details?: Record<string, unknown>;
       };
       throw apiErrorFrom(
         f.error ?? `HTTP ${res.status}`,
-        (f.code ?? 'INTERNAL') as ApiError['code'],
         res.status,
         f.details
       );
@@ -144,6 +142,33 @@ export class CharacterBuilderClient {
     }
   }
 
+  /**
+   * Like {@link json}, but for cursor-paginated endpoints: returns the whole
+   * `PaginatedResponse` envelope (the `data` array AND the sibling `pagination`)
+   * rather than unwrapping to `data`.
+   */
+  private async page<T>(
+    method: HttpMethod,
+    path: string,
+    query?: Query
+  ): Promise<PaginatedResponse<T>> {
+    const res = await this.send(method, path, query);
+    if (res.status < 200 || res.status >= 300) this.fail(res);
+    try {
+      const env = JSON.parse(
+        new TextDecoder().decode(res.body)
+      ) as PaginatedResponse<T>;
+      if (env.success !== true) throw new Error('not a success envelope');
+      return env;
+    } catch {
+      throw new ApiError(
+        'Malformed response envelope',
+        'BAD_RESPONSE',
+        res.status
+      );
+    }
+  }
+
   // ── me ──
   me() {
     return this.json<MeResponse>('GET', ROUTES.me);
@@ -151,7 +176,7 @@ export class CharacterBuilderClient {
 
   // ── characters ──
   listCharacters(query?: { limit?: number; cursor?: string }) {
-    return this.json<Paginated<Character>>('GET', ROUTES.characters, query);
+    return this.page<Character>('GET', ROUTES.characters, query);
   }
   getCharacter(id: string) {
     return this.json<Character>('GET', ROUTES.character(id));
@@ -223,7 +248,7 @@ export class CharacterBuilderClient {
     return this.json<Generation>('POST', ROUTES.generateSheet, undefined, req);
   }
   listGenerations(query?: { limit?: number; cursor?: string }) {
-    return this.json<Paginated<Generation>>('GET', ROUTES.generations, query);
+    return this.page<Generation>('GET', ROUTES.generations, query);
   }
   getGeneration(id: string) {
     return this.json<Generation>('GET', ROUTES.generation(id));
